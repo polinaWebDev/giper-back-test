@@ -27,7 +27,7 @@ export class NotesService {
 
     async add(title: string, text: string): Promise<Note> {
         const notes = await this.readFile();
-        const newNote: Note = { id: uuid(), title, text };
+        const newNote: Note = { id: uuid(), title, text, createdAt: new Date().toISOString() };
         notes.push(newNote);
         await this.writeFile(notes);
         return newNote;
@@ -42,5 +42,21 @@ export class NotesService {
         const [deletedNote] = notes.splice(noteIndex, 1);
         await this.writeFile(notes);
         return deletedNote;
+    }
+
+    async getStats(): Promise<{ count: number, lastCreatedAt: string | null}> {
+        const notes = await this.readFile();
+        const count = notes.length;
+
+        if (count === 0) {
+            return { count: 0, lastCreatedAt: null };
+        }
+
+        const sorted = [...notes].sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime());
+
+        return {
+            count,
+            lastCreatedAt: sorted[0].id
+        }
     }
 }

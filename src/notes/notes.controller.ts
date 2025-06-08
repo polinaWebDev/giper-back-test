@@ -12,6 +12,11 @@ export class NotesController {
         return this.notesService.getAll();
     }
 
+    @Get('/stats')
+    async getStats() {
+        return this.notesService.getStats();
+    }
+
     @Post()
     async add
     (
